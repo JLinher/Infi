@@ -1,34 +1,85 @@
 package at.Jali.basis;
 
+import java.util.Scanner;
 public class CaesarVerschluesselung {
-    public static String encrypt(String text, int shiftKey) {
-        StringBuilder result = new StringBuilder();
+    public static String encrypt(String plaintext, int shift) {
+        StringBuilder ciphertext = new StringBuilder();
 
-        for (char character : text.toCharArray()) {
-            if (Character.isLetter(character)) {
-                char base = Character.isLowerCase(character) ? 'a' : 'A';
-                char encryptedChar = (char) (base + (character - base + shiftKey) % 26);
-                result.append(encryptedChar);
+        for (int i = 0; i < plaintext.length(); i++) {
+            char ch = plaintext.charAt(i);
+            if (Character.isLetter(ch)) {
+                char shifted = (char) (ch + shift);
+                if ((Character.isLowerCase(ch) && shifted > 'z') || (Character.isUpperCase(ch) && shifted > 'Z')) {
+                    shifted = (char) (ch - (26 - shift));
+                }
+                ciphertext.append(shifted);
             } else {
-                result.append(character);
+                ciphertext.append(ch);
             }
         }
-
-        return result.toString();
+        return ciphertext.toString();
     }
 
-    public static String decrypt(String text, int shiftKey) {
-        return encrypt(text, 26 - shiftKey); // Umgekehrter Shift für Entschlüsselung
+    public static String decrypt(String ciphertext, int shift) {
+        StringBuilder plaintext = new StringBuilder();
+
+        for (int i = 0; i < ciphertext.length(); i++) {
+            char ch = ciphertext.charAt(i);
+            if (Character.isLetter(ch)) {
+                char shifted = (char) (ch - shift);
+                if ((Character.isLowerCase(ch) && shifted < 'a') || (Character.isUpperCase(ch) && shifted < 'A')) {
+                    shifted = (char) (ch + (26 - shift));
+                }
+                plaintext.append(shifted);
+            } else {
+                plaintext.append(ch);
+            }
+        }
+        return plaintext.toString();
     }
 
     public static void main(String[] args) {
-        String originalText = "Jan Linher";
-        int shiftKey = 3;
+        Scanner scanner = new Scanner(System.in);
+        boolean isRunning = true;
 
-        String encryptedText = encrypt(originalText, shiftKey);
-        System.out.println("Verschlüsselt: " + encryptedText);
+        while (isRunning) {
+            System.out.println("Willkommen zum Caesar Cipher Programm!");
+            System.out.println("Wählen Sie eine Option:");
+            System.out.println("1. Verschlüsseln");
+            System.out.println("2. Entschlüsseln");
+            System.out.println("3. Programm beenden");
 
-        String decryptedText = decrypt(encryptedText, shiftKey);
-        System.out.println("Entschlüsselt: " + decryptedText);
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Clear the buffer
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Geben Sie den Text ein, der verschlüsselt werden soll:");
+                    String inputText = scanner.nextLine();
+                    System.out.println("Geben Sie den Verschiebungswert ein:");
+                    int shift = scanner.nextInt();
+                    scanner.nextLine(); // Clear the buffer
+                    String encryptedText = encrypt(inputText, shift);
+                    System.out.println("Verschlüsselter Text: " + encryptedText);
+                    break;
+                case 2:
+                    System.out.println("Geben Sie den zu entschlüsselnden Text ein:");
+                    String textToDecrypt = scanner.nextLine();
+                    System.out.println("Geben Sie den Verschiebungswert ein:");
+                    int decryptShift = scanner.nextInt();
+                    scanner.nextLine(); // Clear the buffer
+                    String decryptedText = decrypt(textToDecrypt, decryptShift);
+                    System.out.println("Entschlüsselter Text: " + decryptedText);
+                    break;
+                case 3:
+                    isRunning = false;
+                    System.out.println("Das Programm wird beendet. Auf Wiedersehen!");
+                    break;
+                default:
+                    System.out.println("Ungültige Option ausgewählt.");
+                    break;
+            }
+        }
+        scanner.close();
     }
 }

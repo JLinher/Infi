@@ -43,5 +43,11 @@ public class TestIt {
             System.out.println(garage.getStellplaetze()+"stell - frei"+ garage.getFreiePlaetze());
 
         }
+
+        System.out.println("Alle Autos ergeben eine Höhe von" + garage.getGesamtFahrzeugeUebereinander());
+        garage.getAutoFarbe("rot");
+        garage.loescheAutosFarbe("rot");
+        garage.getAutoFarbe("rot");
+
     }
 }
